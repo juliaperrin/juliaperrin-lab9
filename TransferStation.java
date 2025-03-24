@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class TransferStation extends Station {
    private ArrayList<Station> beforeTransfer;
    private ArrayList<Station> afterTransfer;
@@ -13,13 +15,18 @@ public class TransferStation extends Station {
    public void addTransferStationPrev(Station s) {
       beforeTransfer.add(s);
       otherStations.add(s);
-      s.addNext(this);
+      if (s.getNext() == null || !s.getNext().equals(this)) {
+         s.setNext(this);
+      }
    }
    
-   public void addAfterTransfer(Station s) {
+   public void addTransferStationNext(Station s) {
       afterTransfer.add(s);
-      otherStation.add(s);
-      s.addPrev(this);
+      otherStations.add(s);
+      if (s.getPrev() == null || !s.getPrev().equals(this)) {
+         s.setPrev(this);
+      }
+      
    }
    
    public ArrayList<Station> getAfterTransfer() {
@@ -41,17 +48,11 @@ public class TransferStation extends Station {
       
       String finalString = "TRANSFERSTATION " + name + ": " + lineColor + " line, in service: " + inService + ", previous station: " + prevName + ", next station: " + nextName + "\n\tTransfers: \n"; 
       
-      for (int i = 0; i < beforeTransfer.size(); i++) {
-         Station s = beforeTransfer.get(i);
+      for (Station s : otherStations) {
          finalString += "\t" + s.toString() + "\n";
       }
+
       
-      for (int i = 0; i < afterTransfer.size(); i++) {
-         Station s = afterTransfer.get(i);
-         finalString += "\t" + s.toString() + "\n";
-      }
-      
-      finalString += "\tTransfers: \n";
       return finalString;
    } 
    

@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Station {
    protected String lineColor;
    protected String name;
@@ -15,10 +17,14 @@ public class Station {
    
    public void addNext(Station s) {
       this.next = s;
+      s.prev = this;
+      
    }
    
    public void addPrev(Station s) {
       this.prev = s;
+      s.next = this;
+      
    }
    
    public boolean isAvailable() {
@@ -36,6 +42,7 @@ public class Station {
    public void connect(Station s) {
       this.addNext(s);
       s.addPrev(this);
+      
    } 
    
    public Station getNext() {
@@ -54,6 +61,14 @@ public class Station {
       return lineColor;
    }
    
+   public void setNext(Station s) {
+      this.next = s;
+   }
+   
+   public void setPrev(Station s) {
+      this.prev = s;
+   }
+
    @Override
    public String toString() {
       String prevName = "none";
@@ -102,15 +117,21 @@ public class Station {
       
       if (this instanceof TransferStation) {
          TransferStation transStat = (TransferStation) this;
-         ArrayList<Station> afterTransfer = transStat.getAfterTransfer();
+         int shortestPath = -1;
          
-         for (int i = 0; i < afterTransfer.size(); i++) {
-            Station transfer = afterTransfer.get(i);
+         for (int i = 0; i < transStat.otherStations.size(); i++) {
+            Station transfer = transStat.otherStations.get(i);
             int numStops = transfer.tripLengthAid(destination, wentThere);
             if (numStops != -1) {
-               return 1 + numStops;
+               if (shortestPath == -1 || numStops < shortestPath) {
+                  shortestPath = numStops;
+               }
             }
          }
+         
+         if (shortestPath != -1) {   
+            return 1 + shortestPath;
+         }      
       }
       
       return -1;
