@@ -1,22 +1,31 @@
 public class TransferStation extends Station {
    private ArrayList<Station> beforeTransfer;
    private ArrayList<Station> afterTransfer;
+   public ArrayList<Station> otherStations;
    
    public TransferStation(String color, String name) {
       super(color, name);
       beforeTransfer = new ArrayList<>();
       afterTransfer = new ArrayList<>();
+      otherStations = new ArrayList<>();
    }
    
    public void addTransferStationPrev(Station s) {
       beforeTransfer.add(s);
+      otherStations.add(s);
       s.addNext(this);
    }
    
-   public void addTransferStationNext(Station s) {
+   public void addAfterTransfer(Station s) {
       afterTransfer.add(s);
+      otherStation.add(s);
       s.addPrev(this);
    }
+   
+   public ArrayList<Station> getAfterTransfer() {
+      return afterTransfer;
+   }
+   
    
    @Override
    public String toString() {
@@ -24,10 +33,10 @@ public class TransferStation extends Station {
       String nextName = "none";
       
       if (prev != null) {
-         prev = prev.getName();
+         prevName = prev.getName();
       } 
       if (next != null) {
-         next = next.getName();
+         nextName = next.getName();
       }
       
       String finalString = "TRANSFERSTATION " + name + ": " + lineColor + " line, in service: " + inService + ", previous station: " + prevName + ", next station: " + nextName + "\n\tTransfers: \n"; 
@@ -46,22 +55,5 @@ public class TransferStation extends Station {
       return finalString;
    } 
    
-   public int tripLength(Station destination) {
-      return tripLengthAid(destination, new ArrayList<>());
-   }
-   
-   private int tripLengthAid(Station destination, ArrayList<Station> wentThere) {
-      if (this.equals(destination)) {
-         return 0;
-      }
-      
-      if (wentThere.contains(this)) {
-         return -1;
-      }
-      
-      wentThere.add(this);
-      if (next != null) {
-         int numStopsLeft = next.tripLengthAid(destination, wentThere);
-         if (numStopsLeft != -1) {
-            return 1 + numStopsLeft;
+}            
  

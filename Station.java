@@ -59,11 +59,11 @@ public class Station {
       String prevName = "none";
       String nextName = "none";
       if (prev != null) {
-         String prevName = prev.getName();
+         prevName = prev.getName();
       } 
       
       if (next != null) {
-         String nextName = next.getName();
+         nextName = next.getName();
       }
 
       return "STATION " + name + ": " + lineColor + " line, in service: " + inService + ", previous station: " + prevName + ", next station: " + nextName;
@@ -77,4 +77,43 @@ public class Station {
       return false;
       
    }
-}
+   
+   public int tripLength(Station destination) {
+      return tripLengthAid(destination, new ArrayList<>());
+   }
+   
+   private int tripLengthAid(Station destination, ArrayList<Station> wentThere) {
+      if (this.equals(destination)) {
+         return 0;
+      }
+      
+      if (wentThere.contains(this)) {
+         return -1;
+      }
+      
+      wentThere.add(this);
+      
+      if (next != null) {
+         int numStopsLeft = next.tripLengthAid(destination, wentThere);
+         if (numStopsLeft != -1) {
+            return 1 + numStopsLeft;
+         }
+      }
+      
+      if (this instanceof TransferStation) {
+         TransferStation transStat = (TransferStation) this;
+         ArrayList<Station> afterTransfer = transStat.getAfterTransfer();
+         
+         for (int i = 0; i < afterTransfer.size(); i++) {
+            Station transfer = afterTransfer.get(i);
+            int numStops = transfer.tripLengthAid(destination, wentThere);
+            if (numStops != -1) {
+               return 1 + numStops;
+            }
+         }
+      }
+      
+      return -1;
+   }
+
+}  
